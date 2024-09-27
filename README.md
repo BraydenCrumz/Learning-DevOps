@@ -29,3 +29,68 @@ As far as the virtual machines themselves, I want to set up the following:
    - **Cores:** 4  
    - **Memory:** 4GB  
    - **Purpose:** Joined to the domain to work on Group Policy from a domain level.
+
+### September 25th 4:00PM to September 26 5:00AM (EST)
+
+Tried setting up API Access and a main.tf file, but the tutortial mentioned above seemed to miss out on several neccesary details. I am instead opting to run WSL2 with Ubuntu on my local machine (not on Win10Pro for Hyper-V) and start fresh with [this tutorial](https://www.youtube.com/watch?v=dvyeoDBUtsU&t) by Christian Lempa.
+
+### September 26th 9:00PM (EST)
+
+After undoing my previous work, I remoted into my Ubuntu/WSL2 Machine. I opened the Proxmox WebGUI and created a new user called ```terraformSA``` and gave it ```PVEAdmin``` perms as well as ```Administator``` Perms to the ```local-lvm``` storage. Then, I created a API token for the ```terraformSA``` account without privelege seperation so it would have the same permissions. 
+
+Although I could have installed it on the Ubuntu machine, I opted to connect VSCode on my local machine to the Ubuntu File System with the WSL VSCode extension. Back on WSL2:
+```bash
+mkdir /home/user/terraformProxmox #this will be our working directory
+cd /home/user/terraformProxmox
+sudo nano provider.tf
+```
+I then saved and closed the empty ```provider.tf``` file and opened it with VSCode. This is where we will declare the version and provider. Although Proxmox does not have an official Terraform provider, the telmate/proxmox provider seems to be reputable. We will also create three variables for the Proxmox API Credentials. (this will be explained later.)
+```terraform
+terraform {
+
+    required_version = >= "0.13.0" 
+
+    required_providers {
+        proxmox = {
+            source = "telmate/proxmox"
+            version ="2.9.3"
+        }
+    }
+}
+
+variable "proxmox_api_url" {
+    type = string
+}
+
+variable "proxmox_api_token_id"{
+    type = string
+    sensitive = true # will prevent it from being displayed in the terminal output
+}
+
+variable "proxmox_api_token_secret" {
+    type = string
+    sensitive = true
+}
+```
+In the same directory, we will create a ```credentials.auto.tfvars``` file where we will store and define the above variables. Saving the file as a ```.auto.tfvars``` will allow it to be automatically loaded as long as it is in the same directory, meaning we will not have to call or load it later. This will also allow us to exclude only one file from our GitHub repository when we upload it later.
+```terraform
+proxmox_api_url = ***
+proxmox_api_token_id = ***
+proxmox_api_token_secret = ***
+```
+Now that we have our credentials defined above, we need to go back to ```provider.tf``` and assign them according to the provider's language:
+```terraform
+provider "proxmox" { # assigned lines 6-8
+
+    pm_api_url = var.proxmox_api_url # the var. states we are referring to a variable.
+    pm_api_token_id = var.proxmox_api_token_id
+    pm_api_token_secret = var.proxmox_api_token_secret
+
+    pm_tls_insecure = true # needed because certificate is self-signed.
+}
+```
+After saving, we can now initalize Terraform from WSL2
+```bash
+terraform init
+```
+If everyting went smoothly, it should return that it found the telmate/proxmox provider and succesfully initialized.
