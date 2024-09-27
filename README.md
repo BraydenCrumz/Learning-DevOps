@@ -1,7 +1,6 @@
 # Learning-DevOps
 
-This repository will be used to track my progress from nothing to, hopefully, DevOps Engineer. Currently SysAdmin.
-
+This repository will be used to track my progress from zero, hopefully, hero. 
 ## Game Plan
 ### September 25th, 1:00 AM (EST)
 
