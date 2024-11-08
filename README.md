@@ -2,7 +2,6 @@
 
 This repository will be used to track my progress from zero, hopefully, hero. 
 ## Game Plan
-### September 25th, 1:00 AM (EST)
 
 I dug up this tiny ThinkCentre I had with an i5-10400T CPU (6 Physical Cores, 12 Logical Cores) and 24GB of DDR4 RAM and installed Proxmox VE 8.2.2.
 
@@ -29,11 +28,11 @@ As far as the virtual machines themselves, I want to set up the following:
    - **Memory:** 4GB  
    - **Purpose:** Joined to the domain to work on Group Policy from a domain level.
 
-### September 25th 4:00PM to September 26 5:00AM (EST)
+
 
 Tried setting up API Access and a main.tf file, but the tutortial mentioned above seemed to miss out on several neccesary details. I am instead opting to run WSL2 with Ubuntu on my local machine (not on Win10Pro for Hyper-V) and start fresh with [this tutorial](https://www.youtube.com/watch?v=dvyeoDBUtsU&t) by Christian Lempa.
 
-### September 26th 9:00PM (EST)
+
 
 After undoing my previous work, I remoted into my Ubuntu/WSL2 Machine. I opened the Proxmox WebGUI and created a new user called ```terraformSA``` and gave it ```PVEAdmin``` perms as well as ```Administator``` Perms to the ```local-lvm``` storage. Then, I created a API token for the ```terraformSA``` account without privelege seperation so it would have the same permissions. 
 
